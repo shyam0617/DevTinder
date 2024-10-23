@@ -1,5 +1,8 @@
  const express=require("express");
  const app=express();
+
+ const {AdminAuth,UserAuth}=require("./middlewares/middle");
+
  //order matters in routes
  app.use("/test/2",(req,res)=>{
     res.send("hahi");
@@ -34,9 +37,9 @@
  app.get("/use+r",(req,res)=>{
    res.send("users profile");
  })
-app.get(/a/,(req,res)=>{
-   res.send("a page");
-})
+// app.get(/a/,(req,res)=>{
+//    res.send("a page");
+// })
  app.get("/admins(role)?",(req,res)=>{
     res.send("admin role dashboard opens");
  })
@@ -80,3 +83,62 @@ app.get("/*fly$",(req,res)=>{
  },(req,res)=>{
    res.send("2nd login page");
  });
+
+ /*****************************************************Middle wares************************************************************** */
+
+//  app.get("/admin/getAllData",(req,res)=>{
+//     //before giving the response we have to check that the admin is the autorised user or not
+//     const token="xyza";
+//     const isAuthorised=token==="xyz";
+
+//     if(!isAuthorised)
+//     {
+//       res.send(401).sendDate("unauthorised user");
+//     }
+//     else
+//     {
+//       res.send("admin data");
+//     }
+//  })
+
+//  app.get("/admin/DeleteUser",(req,res)=>{
+//    //before deleting check the admin is valid one  or not
+//    const token="xyz";//actually we have to get data from url
+//    const isAuthorised=token==="xyz";
+
+//    if(!isAuthorised)
+//    {
+//       res.send(401).sendData("unauthorised admin");
+//    }
+//    else
+//    {
+//       res.send("delete user");
+//    }
+//  })
+
+ //problem is that we have to check the valid one or not for each admin api 
+ //here we have to use middle ware concept
+
+ //using middlewares
+//  app.use("/admin",(req,res,next)=>{
+//    const token="xy";
+//    const isAuthorised=token==="xya";
+//    if(!isAuthorised)
+//    {
+//       res.send(401).sendDate("unauthorised user");
+//    }
+//    else
+//    {
+//       next();
+//    }
+//  })
+ app.use("/admin/getAllData",AdminAuth,(req,res)=>{
+   res.send("display all data");
+ })
+ app.use("/admin/deleteUser",AdminAuth,(req,res)=>{
+   res.send("user delted successfully");
+ })
+ app.get("/user/getInfo",UserAuth,(req,res)=>{
+   res.send("your info");
+ })
+//diffrence between app.all and app.use
