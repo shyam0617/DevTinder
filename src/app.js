@@ -1,4 +1,9 @@
  const express=require("express");
+ /************database creation************* */
+ const connectDB=require("./config/database");
+ const User=require("./models/User");
+/******************************************** */
+
  const app=express();
 
  const {AdminAuth,UserAuth}=require("./middlewares/middle");
@@ -46,9 +51,9 @@
 app.get("/*fly$",(req,res)=>{
    res.send("sufix with fly"); //suffix end with fly
 })
- app.listen(3000,()=>{
-    console.log("server running");
- })
+// app.listen(3000,()=>{
+//    console.log("server running");
+// })
 
  /********************************************* Multiple route handlers*************************************** */
  app.use("/customers",
@@ -142,3 +147,48 @@ app.get("/*fly$",(req,res)=>{
    res.send("your info");
  })
 //diffrence between app.all and app.use
+/***********************************************************************Database connection **********************************/
+
+connectDB().then(()=>{
+
+   console.log("database connected"); //after database succesfully connected then only server start listening;
+
+   app.listen(3000,()=>{
+         console.log("server running");
+       })
+
+}).catch((err)=>{
+   console.error(err);
+});
+
+app.post("/signup",async(req,res)=>{
+  
+   const UserOne={
+      firstName:"Shyam",
+      LastName:"Sunder",
+      Email:"abc@gmail.com",
+      Age:60,
+      gender:"Male",
+   }
+   const UserTwo={
+      firtname:"gowtham",//not showed in database because schema should be casesensitive
+      LastName:"raj",
+      Email:"cdc@gmail.com",
+      age:70,//not showed in database because schema should be casesensitive
+      gender:"Male",
+   }
+   const user=new User(UserOne);
+   const u=new User(UserTwo);
+   try{
+      await user.save();
+  
+      await u.save();
+      res.send("data stored sucessfully");
+   }
+   catch(err){
+      res.send("erorr not stored database"+err.message);
+   }
+
+
+}
+)
