@@ -207,13 +207,26 @@ app.use(express.json());//acts as a middle ware its convert the json object into
 /*************************************************signup************************** */
 app.post("/signup",async(req,res)=>{
    //before adding the data into the database we have to validate the data
-   
-
-   const {Password}=req.body;
-
-   const {firstName,SecondName,Email,age,gender,skills}=req.body;
    try{
+
       validateData(req);
+
+      const {Password}=req.body;
+      const hashPassword= await bcrypt.hash(Password,3);
+      console.log(hashPassword);
+
+      const {firstName,SecondName,Email,age,gender,skills}=req.body;
+      const u=new User({
+         firstName,
+         SecondName,
+         Email,
+         age,
+         Password:hashPassword,
+         gender,
+         skills,
+      });
+      await u.save();
+      res.send("data stored sucessfully");
 
    }
    catch(err)
@@ -221,6 +234,37 @@ app.post("/signup",async(req,res)=>{
       res.status(400).send(err.message);
    }
 
+})
+/***********************************************login***************************** */
+app.post("/loginuser",async(req,res)=>{
+    console.log("login api");
+   try{
+         const {Email,Password}=req.body;
+
+         const one=await User.findOne({Email:Email});
+         //console.log(one);
+         if(!one)
+         {
+            throw new Error("invalid credintials");
+         }
+         const isPassword= await bcrypt.compare(Password, one.Password);
+         //console.log(isPassword);
+
+         if(isPassword)
+         {
+            res.send("login sucessfullly");
+         }
+         else
+         {
+            throw new Error("invalid credintials");
+         }
+
+   }
+   catch(err)
+   {
+      res.status(400).send(err.message);
+   }
+   
 })
 /*******get users based on email */
 app.get("/get",async(req,res)=>{

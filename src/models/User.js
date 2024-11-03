@@ -46,6 +46,8 @@ const UserSchema=mongoose.Schema({
     skills:{
         type:[]
     }
+},{
+    Timestamp:true,
 })
 
 module.exports=mongoose.model("Users",UserSchema);
