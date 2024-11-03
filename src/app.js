@@ -2,6 +2,9 @@
  /************database creation************* */
  const connectDB=require("./config/database");
  const User=require("./models/User");
+ const {validateData}=require("./utils/validatesignupdata");//data validation in signup case
+ const bcrypt=require("bcrypt")//used for password hashing
+
 /******************************************** */
 
  const app=express();
@@ -161,34 +164,142 @@ connectDB().then(()=>{
    console.error(err);
 });
 
+app.use(express.json());//acts as a middle ware its convert the json object into js object and keeps in the req.body
+
+// app.post("/signup",async(req,res)=>{
+  
+//    // const UserOne={
+//    //    firstName:"Shyam",
+//    //    LastName:"Sunder",
+//    //    Email:"abc@gmail.com",
+//    //    Age:60,
+//    //    gender:"Male",
+//    // }
+//    // const UserTwo={
+//    //    firtname:"gowtham",//not showed in database because schema should be casesensitive
+//    //    LastName:"raj",
+//    //    Email:"cdc@gmail.com",
+//    //    age:70,//not showed in database because schema should be casesensitive
+//    //    gender:"Male",
+//    // }
+//    // const user=new User(UserOne);
+//    // const u=new User(UserTwo);
+//    // try{
+//    //    await user.save();
+  
+//    //    await u.save();
+//    //    res.send("data stored sucessfully");
+//    // }
+//    // catch(err){
+//    //    res.send("erorr not stored database"+err.message);
+//    // }
+// /***********dynamic from postman */
+// const u=new User(req.body)
+// try{
+//    await u.save();
+//    res.send("data stored sucessfully");
+// }
+// catch(err){
+//    res.send(err.message);
+// }
+// }
+// )
+/*************************************************signup************************** */
 app.post("/signup",async(req,res)=>{
-  
-   const UserOne={
-      firstName:"Shyam",
-      LastName:"Sunder",
-      Email:"abc@gmail.com",
-      Age:60,
-      gender:"Male",
-   }
-   const UserTwo={
-      firtname:"gowtham",//not showed in database because schema should be casesensitive
-      LastName:"raj",
-      Email:"cdc@gmail.com",
-      age:70,//not showed in database because schema should be casesensitive
-      gender:"Male",
-   }
-   const user=new User(UserOne);
-   const u=new User(UserTwo);
+   //before adding the data into the database we have to validate the data
+   
+
+   const {Password}=req.body;
+
+   const {firstName,SecondName,Email,age,gender,skills}=req.body;
    try{
-      await user.save();
+      validateData(req);
+
+   }
+   catch(err)
+   {
+      res.status(400).send(err.message);
+   }
+
+})
+/*******get users based on email */
+app.get("/get",async(req,res)=>{
+   
+   const userEmail=req.body.Email;
+   try{
+      const one=await User.find({Email:userEmail});
+      res.send(one);
+   }
+   catch(err)
+   {
+      res.status(400).send(err.message);
+   }
   
-      await u.save();
-      res.send("data stored sucessfully");
-   }
-   catch(err){
-      res.send("erorr not stored database"+err.message);
-   }
+})
 
+app.get("/allUsers",async(req,res)=>{
+   try{
+      const allUsers=await User.find({});
+      res.send(allUsers);
+   }
+   catch(err)
+   {
+      res.status(400).send(err.message);
+   }
+})
 
-}
-)
+app.delete("/deletebyId",async(req,res)=>{
+   
+   const userId=req.body.userId;
+
+   try{
+      //const user=await User.findByIdAndDelete({_id:userId});
+      const user=await User.findByIdAndDelete(userId);
+      res.send(user);
+   }
+   catch(err)
+   {
+      res.send(err.message);
+   } 
+})
+/***************************validatores patch api*********** */
+app.patch("/user",async(req,res)=>{
+   const userId=req.body.userId;
+   const data=req.body;
+   try{
+      const user=await User.findByIdAndUpdate({_id:userId},data);
+      res.send(user);
+      runValidators:true;
+   }
+   catch(err)
+   {
+      res.status(400).send(err.message);
+   }
+})
+/****************************api level validation********* we make sure that all fields not accessible for update*/
+app.patch("/user/:userId",async(req,res)=>{
+   const userId=req.params?.userId;
+   const data=req.body;
+
+   try{
+      const allowed_updates=["skills","age","LastName"];
+      const isUpdateAllowed=Object.keys(data).every((k)=>allowed_updates.includes(k));
+
+      if(!isUpdateAllowed)
+      {
+         throw new Error("Update not allowed");
+      }
+      if(data?.skills.length>10)
+      {
+         throw new Error("Skills cannot more than 10");
+      }
+      const user=await User.findByIdAndUpdate({_id:userId},data);
+      returnDocument:"after";
+      runValidators:true;
+      res.send(user);
+   }
+   catch(err)
+   {
+      res.status(400).send(err.message);
+   }
+})
