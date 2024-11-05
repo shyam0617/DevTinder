@@ -4,6 +4,8 @@
  const User=require("./models/User");
  const {validateData}=require("./utils/validatesignupdata");//data validation in signup case
  const bcrypt=require("bcrypt")//used for password hashing
+ const cookieparser=require("cookie-parser");//for reading the cookie
+ const jwt=require("jsonwebtoken");//to create the webtoken
 
 /******************************************** */
 
@@ -165,6 +167,7 @@ connectDB().then(()=>{
 });
 
 app.use(express.json());//acts as a middle ware its convert the json object into js object and keeps in the req.body
+app.use(cookieparser());//for cookie reading middleware
 
 // app.post("/signup",async(req,res)=>{
   
@@ -251,7 +254,9 @@ app.post("/loginuser",async(req,res)=>{
          //console.log(isPassword);
 
          if(isPassword)
-         {
+         {  
+            const token=await jwt.sign({_id:one._id},"shyam1564");
+            res.cookie("token",token);
             res.send("login sucessfullly");
          }
          else
@@ -266,6 +271,34 @@ app.post("/loginuser",async(req,res)=>{
    }
    
 })
+app.get("/profile",async(req,res)=>{
+  try{
+         const cookie=req.cookies;
+         const {token}=cookie;
+
+         if(!token)
+         {
+            throw new Error("token not valid");
+         }
+         
+         const decodedMessage=await jwt.verify(token,"shyam1564");
+         const {_id}=decodedMessage;
+
+         //console.log(token);//we can cant read the cookie directly for that we have to install npm i cokie-pareser 
+         console.log(_id);
+         const t=await User.find({_id:_id});
+         if(!t)
+         {
+            throw new Error("user not found");
+         }
+         res.send(t);
+  }
+  catch(err)
+  {
+   res.status(400).send(err.message);
+  }
+   
+});
 /*******get users based on email */
 app.get("/get",async(req,res)=>{
    
