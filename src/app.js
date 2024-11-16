@@ -6,12 +6,12 @@
  const bcrypt=require("bcrypt")//used for password hashing
  const cookieparser=require("cookie-parser");//for reading the cookie
  const jwt=require("jsonwebtoken");//to create the webtoken
-
+ 
 /******************************************** */
 
  const app=express();
 
- const {AdminAuth,UserAuth}=require("./middlewares/middle");
+ const {AdminAuth,userauth}=require("./middlewares/middle");
 
  //order matters in routes
  app.use("/test/2",(req,res)=>{
@@ -271,7 +271,7 @@ app.post("/loginuser",async(req,res)=>{
    }
    
 })
-app.get("/profile",async(req,res)=>{
+app.get("/profile",userauth,async(req,res)=>{
   try{
          const cookie=req.cookies;
          const {token}=cookie;
@@ -300,7 +300,7 @@ app.get("/profile",async(req,res)=>{
    
 });
 /*******get users based on email */
-app.get("/get",async(req,res)=>{
+app.get("/get",userauth,async(req,res)=>{
    
    const userEmail=req.body.Email;
    try{

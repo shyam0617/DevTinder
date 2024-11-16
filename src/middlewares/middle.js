@@ -1,4 +1,7 @@
 
+const jwt=require("jsonwebtoken");
+const user=require("../models/User");
+
 const AdminAuth=("/admin",(req,res,next)=>{
     const getToken="xyz";
     const isAuthorised=getToken==="xyz";
@@ -12,19 +15,47 @@ const AdminAuth=("/admin",(req,res,next)=>{
     }
 })
 
-const UserAuth=("/user",(req,res,next)=>{
-    const getToken="xyz";
-    const isAuthorised=getToken==="xyz";
-    if(!isAuthorised)
+// const UserAuth=("/user",(req,res,next)=>{
+//     const getToken="xyz";
+//     const isAuthorised=getToken==="xyz";
+//     if(!isAuthorised)
+//     {
+//         res.send(401).sendData("unauthorised user");
+//     }
+//     else
+//     {
+//         next();
+//     }
+// })
+//userauthentication middlewares
+
+const userauth=async(req,res,next)=>{
+  try{
+    const{token}=req.cookies;
+    if(!token)
     {
-        res.send(401).sendData("unauthorised user");
+        throw new Error("token is not valid");
     }
-    else
-    {
-        next();
-    }
-})
+    const decodeObj=await jwt.verify(token,"shyam1564");
+
+    const {_id}=decodeObj;
+
+    const user=await user.findById(_id);
+    if(!user)
+        throw new Error("user not found");
+    
+    req.user=user;
+    next();
+  }
+  catch(err)
+  {
+    res.status(400).send("error "+err.message);
+  }
+    
+
+}
+
 module.exports={
     AdminAuth,
-    UserAuth,
+    userauth,
 };
