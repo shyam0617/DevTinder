@@ -1,6 +1,6 @@
 
 const jwt=require("jsonwebtoken");
-const user=require("../models/User");
+const User=require("../models/User");
 
 const AdminAuth=("/admin",(req,res,next)=>{
     const getToken="xyz";
@@ -32,6 +32,7 @@ const AdminAuth=("/admin",(req,res,next)=>{
 const userauth=async(req,res,next)=>{
   try{
     const{token}=req.cookies;
+    //console.log(token);
     if(!token)
     {
         throw new Error("token is not valid");
@@ -40,15 +41,15 @@ const userauth=async(req,res,next)=>{
 
     const {_id}=decodeObj;
 
-    const user=await user.findById(_id);
+    const user=await User.findById(_id);
     if(!user)
-        throw new Error("user not found");
+    throw new Error("user not found");
     
     req.user=user;
     next();
   }
   catch(err)
-  {
+  { 
     res.status(400).send("error "+err.message);
   }
     
