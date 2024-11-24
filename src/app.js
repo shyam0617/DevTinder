@@ -30,11 +30,15 @@ connectDB().then(()=>{
 app.use(express.json());//acts as a middle ware its convert the json object into js object and keeps in the req.body
 app.use(cookieparser());//for cookie reading middleware
 /**********************************************************************Express Router************************************** */
-const authrouter=require("./Routes/authrouter");
-const profilerouter=require("./Routes/profilerouter");
+const authRouter=require("./Routes/authrouter");
+const profileRouter=require("./Routes/profilerouter");
+const requestRouter=require("./Routes/request");
 
-app.use("/",authrouter);
-app.use("/",profilerouter);
+
+app.use("/",authRouter);
+app.use("/",profileRouter);
+app.use("/",requestRouter);
+
 
 app.get("/profile",userauth,async(req,res)=>{
   try{

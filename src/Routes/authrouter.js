@@ -1,14 +1,14 @@
 
 const express=require("express");
 
-const authrouter=express.Router();
+const authRouter=express.Router();
 const {validateData}=require("../utils/validatesignupdata");
 const bcrypt=require("bcrypt")//used for password hashing
 const User=require("../models/User");
 const jwt=require("jsonwebtoken");//to create the webtoken
 
 
-authrouter.post("/signup",async(req,res)=>{
+authRouter.post("/signup",async(req,res)=>{
     //before adding the data into the database we have to validate the data
     try{
  
@@ -39,7 +39,7 @@ authrouter.post("/signup",async(req,res)=>{
  
  });
 
-authrouter.post("/loginuser",async(req,res)=>{
+authRouter.post("/loginuser",async(req,res)=>{
 
    try{
          const {Email,Password}=req.body;
@@ -73,11 +73,11 @@ authrouter.post("/loginuser",async(req,res)=>{
    
 });
 
-authrouter.post("/logout", async(req,res)=>{
+authRouter.post("/logout", async(req,res)=>{
    res.cookie("token",null,{
       expires:new Date(Date.now())
    })
    res.send("logout sucessfully");
 });
 
- module.exports=authrouter;
+ module.exports=authRouter;

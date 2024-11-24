@@ -3,9 +3,9 @@ const express=require("express");
 const {userauth}=require("../middlewares/middle");
 const{profilevalidate}=require("../utils/validatesignupdata");
 
-const profilerouter=express.Router();
+const profileRouter=express.Router();
 
-profilerouter.get("/profile/view",userauth,async(req,res)=>{
+profileRouter.get("/profile/view",userauth,async(req,res)=>{
     try{
            const user=req.user;
            res.send(user);
@@ -16,7 +16,7 @@ profilerouter.get("/profile/view",userauth,async(req,res)=>{
     }
      
 });
-profilerouter.patch("/profile/edit",userauth, async(req,res)=>{
+profileRouter.patch("/profile/edit",userauth, async(req,res)=>{
 
     try{   
         if(!profilevalidate(req))
@@ -49,4 +49,4 @@ profilerouter.patch("/profile/edit",userauth, async(req,res)=>{
     }  
 })
 
-module.exports=profilerouter;
+module.exports=profileRouter;
