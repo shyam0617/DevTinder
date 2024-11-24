@@ -32,7 +32,7 @@ const UserSchema=mongoose.Schema({
     },
     Age:{
         type:Number,
-        required:true,
+        //required:true,
         min:[18,'age should be greater than 18'],
         max:[50]
     },
