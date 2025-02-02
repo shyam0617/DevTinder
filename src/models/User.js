@@ -13,6 +13,15 @@ const UserSchema=mongoose.Schema({
         required:true,
         minLength:2
     },
+    PhotoUrl: {
+        type: String,
+        default: "https://geographyandyou.com/images/user-profile.png",
+        validate(value) {
+          if (!validator.isURL(value)) {
+            throw new Error("Invalid Photo URL: " + value);
+          }
+        },
+      },
     Email:{
         type:String,
         required:true,
@@ -30,11 +39,11 @@ const UserSchema=mongoose.Schema({
         type:String,
         required:true,
     },
-    Age:{
+    age:{
         type:Number,
         //required:true,
         min:[18,'age should be greater than 18'],
-        max:[50]
+        max:[70]
     },
     gender:{
         type:String,
@@ -47,6 +56,9 @@ const UserSchema=mongoose.Schema({
     },
     skills:{
         type:[]
+    },
+    about:{
+        type:String,
     }
 },{
     Timestamp:true,

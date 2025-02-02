@@ -35,13 +35,14 @@ const userauth=async(req,res,next)=>{
     //console.log(token);
     if(!token)
     {
-        throw new Error("token is not valid");
+        return res.status(401).message("please login");
     }
     const decodeObj=await jwt.verify(token,"shyam1564");
 
     const {_id}=decodeObj;
 
     const user=await User.findById(_id);
+    console.log(user);
     if(!user)
     throw new Error("user not found");
     

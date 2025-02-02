@@ -54,13 +54,14 @@ requestRouter.post("/request/review/:status/:toUserId",userauth,  async(req,res)
          const loggeduser=req.user
          const status=req.params.status;
          const userid=req.params.toUserId;
-         console.log(userid);
-
+        // console.log(userid);
+        //console.log(status);
          const isallowed=["accepted","rejected"];
-
+          console.log(isallowed.includes(status));
          if(!isallowed.includes(status))
          return res.status(400).json({message:"status is not valid"});
          console.log(loggeduser._id);
+         console.log(userid);
          const ConnectionRequest=await ConnectionRequestModel.findOne({
             fromUserId:userid,
             toUserId:loggeduser._id,
@@ -75,7 +76,7 @@ requestRouter.post("/request/review/:status/:toUserId",userauth,  async(req,res)
          console.log(ConnectionRequest);
 
          const data=await ConnectionRequest.save();
-         res.json({messaage:`successfully ${status} profile`});
+         res.json({messaage:`successfully ${status} profile`,data:data});
     }
     catch(err)
     {   

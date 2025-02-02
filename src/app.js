@@ -6,10 +6,15 @@
  const bcrypt=require("bcrypt")//used for password hashing
  const cookieparser=require("cookie-parser");//for reading the cookie
  const jwt=require("jsonwebtoken");//to create the webtoken
+ const cors = require('cors')
  
 /******************************************** */
 
  const app=express();
+ app.use(cors({
+   origin:"http://localhost:5173",
+   credentials:true,
+ }));
 
  const {AdminAuth,userauth}=require("./middlewares/middle");
 
@@ -33,11 +38,13 @@ app.use(cookieparser());//for cookie reading middleware
 const authRouter=require("./Routes/authrouter");
 const profileRouter=require("./Routes/profilerouter");
 const requestRouter=require("./Routes/request");
+const userRouter = require("./Routes/Connections");
 
 
 app.use("/",authRouter);
 app.use("/",profileRouter);
 app.use("/",requestRouter);
+app.use("/",userRouter);
 
 
 app.get("/profile",userauth,async(req,res)=>{
@@ -83,16 +90,6 @@ app.get("/get",userauth,async(req,res)=>{
   
 })
 
-app.get("/allUsers",async(req,res)=>{
-   try{
-      const allUsers=await User.find({});
-      res.send(allUsers);
-   }
-   catch(err)
-   {
-      res.status(400).send(err.message);
-   }
-})
 
 app.delete("/deletebyId",async(req,res)=>{
    

@@ -18,19 +18,22 @@ authRouter.post("/signup",async(req,res)=>{
        const hashPassword= await bcrypt.hash(Password,3);
        console.log(hashPassword);
  
-       const {firstName,SecondName,Email,Age,gender,skills}=req.body;
+       const {firstName,SecondName,Email,age,gender,skills,PhotoUrl,about}=req.body;
        const u=new User({
           firstName,
           SecondName,
           Email,
-          Age,
+          age,
           Password:hashPassword,
           gender,
           skills,
+          PhotoUrl,
+          about,
        });
        await u.save();
-       res.send("data stored sucessfully");
- 
+       res.send({message:"data stored sucessfully",
+         data:u
+       });
     }
     catch(err)
     {
@@ -42,10 +45,10 @@ authRouter.post("/signup",async(req,res)=>{
 authRouter.post("/loginuser",async(req,res)=>{
 
    try{
-         const {Email,Password}=req.body;
-
-         const one=await User.findOne({Email:Email});
-         //console.log(one);
+         const {EmailId,Password}=req.body;
+         //console.log(EmailId);
+         const one=await User.findOne({Email:EmailId});
+         console.log(one);
          if(!one)
          {
             throw new Error("invalid credintials");
@@ -58,7 +61,8 @@ authRouter.post("/loginuser",async(req,res)=>{
             const token=await jwt.sign({_id:one._id},"shyam1564",{expiresIn:"1d"});
             //using schema method const token=await user.getJWT();
             res.cookie("token",token);
-            res.send("login sucessfullly");
+            //console.log("hai");
+            res.send(one);
          }
          else
          {
@@ -67,7 +71,7 @@ authRouter.post("/loginuser",async(req,res)=>{
 
    }
    catch(err)
-   {
+   {  
       res.status(400).send(err.message);
    }
    
