@@ -16,7 +16,7 @@ authRouter.post("/signup",async(req,res)=>{
  
        const {Password}=req.body;
        const hashPassword= await bcrypt.hash(Password,3);
-       console.log(hashPassword);
+       //console.log(hashPassword);
  
        const {firstName,SecondName,Email,age,gender,skills,PhotoUrl,about}=req.body;
        const u=new User({
@@ -30,10 +30,18 @@ authRouter.post("/signup",async(req,res)=>{
           PhotoUrl,
           about,
        });
-       await u.save();
-       res.send({message:"data stored sucessfully",
-         data:u
+       const savedUser=await u.save();
+       console.log(savedUser);
+       const token = await savedUser.getJWT();
+       console.log(token);
+       res.cookie("token", token, {
+         expires: new Date(Date.now() + 8 * 3600000),
        });
+   
+       res.json({ message: "User Added successfully!", data: savedUser });
+      //  res.send({message:"data stored sucessfully",
+      //    data:u
+      //  });
     }
     catch(err)
     {
@@ -46,7 +54,7 @@ authRouter.post("/loginuser",async(req,res)=>{
 
    try{
          const {EmailId,Password}=req.body;
-         //console.log(EmailId);
+         console.log(EmailId);
          const one=await User.findOne({Email:EmailId});
          console.log(one);
          if(!one)

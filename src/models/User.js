@@ -1,6 +1,7 @@
 
 const mongoose=require("mongoose");
 const validator=require("validator");
+const jwt=require("jsonwebtoken");
 
 const UserSchema=mongoose.Schema({
     firstName:{
@@ -66,9 +67,7 @@ const UserSchema=mongoose.Schema({
 UserSchema.methods.getJWT=async function (){//do not use arrow fucntions here this keyword behaves different in arrow funcition
     const user=this;
 
-    const token=await jwt.sign({_id:user._id},"shyam1564",{
-        expiresIN:"7d",
-    });
+    const token=await jwt.sign({_id:user._id},"shyam1564");
     return token;
 }
 UserSchema.methods.validatePassword=async function(passwordInputeByUser){

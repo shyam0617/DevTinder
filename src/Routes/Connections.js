@@ -12,13 +12,13 @@ userRouter.get("/user/requests/received", userauth, async (req, res) => {
   try {
     console.log("pending request");
     const loggedInUser = req.user;
-    console.log(loggedInUser);
+    //console.log(loggedInUser);
     const connectionRequests = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
       status: "interested",
     }).populate("fromUserId", USER_SAFE_DATA);
     // }).populate("fromUserId", ["firstName", "lastName"]);
-    console.log(connectionRequests);
+    //console.log(connectionRequests);
     res.json({
       message: "Data fetched successfully",
       data: connectionRequests,
