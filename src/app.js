@@ -25,7 +25,7 @@ connectDB().then(()=>{
    console.log("database connected"); //after database succesfully connected then only server start listening;
 
    app.listen(5555,()=>{
-         console.log("server running");
+         console.log("server running on 5555");
        })
 
 }).catch((err)=>{
