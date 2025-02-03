@@ -27,9 +27,9 @@ authRouter.post("/signup",async(req,res)=>{
           Password:hashPassword,
        });
        const savedUser=await u.save();
-       console.log(savedUser);
+       //console.log(savedUser);
        const token = await savedUser.getJWT();
-       console.log(token);
+      // console.log(token);
        res.cookie("token", token, {
          expires: new Date(Date.now() + 8 * 3600000),
        });
@@ -50,9 +50,9 @@ authRouter.post("/loginuser",async(req,res)=>{
 
    try{
          const {EmailId,Password}=req.body;
-         console.log(EmailId);
+         //console.log(EmailId);
          const one=await User.findOne({Email:EmailId});
-         console.log(one);
+         //console.log(one);
          if(!one)
          {
             throw new Error("invalid credintials");

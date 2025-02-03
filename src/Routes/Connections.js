@@ -10,7 +10,7 @@ const USER_SAFE_DATA = "firstName SecondName PhotoUrl age gender about skills";
 // Get all the pending connection request for the loggedIn user
 userRouter.get("/user/requests/received", userauth, async (req, res) => {
   try {
-    console.log("pending request");
+    //console.log("pending request");
     const loggedInUser = req.user;
     //console.log(loggedInUser);
     const connectionRequests = await ConnectionRequest.find({

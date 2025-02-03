@@ -15,20 +15,6 @@ const AdminAuth=("/admin",(req,res,next)=>{
     }
 })
 
-// const UserAuth=("/user",(req,res,next)=>{
-//     const getToken="xyz";
-//     const isAuthorised=getToken==="xyz";
-//     if(!isAuthorised)
-//     {
-//         res.send(401).sendData("unauthorised user");
-//     }
-//     else
-//     {
-//         next();
-//     }
-// })
-//userauthentication middlewares
-
 const userauth=async(req,res,next)=>{
   try{
     const{token}=req.cookies;
