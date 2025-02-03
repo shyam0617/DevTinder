@@ -63,7 +63,6 @@ userRouter.get("/feed", userauth, async (req, res) => {
     
     const loggedInUser = req.user;
     
-
     const page = parseInt(req.query.page) || 1;
     let limit = parseInt(req.query.limit) || 10;
     limit = limit > 50 ? 50 : limit;
@@ -88,7 +87,8 @@ userRouter.get("/feed", userauth, async (req, res) => {
       .limit(limit);
     res.json({ data: users });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.log("hai");
+    res.status(400).json({ message: "please login" });
   }
 });
 module.exports = userRouter;

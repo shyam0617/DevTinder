@@ -37,7 +37,7 @@ const userauth=async(req,res,next)=>{
   }
   catch(err)
   { 
-    res.status(400).send("error "+err.message);
+    res.status(400).send("please login");
   }
     
 
