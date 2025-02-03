@@ -12,23 +12,19 @@ authRouter.post("/signup",async(req,res)=>{
     //before adding the data into the database we have to validate the data
     try{
  
-       //validateData(req);
+       validateData(req);
  
        const {Password}=req.body;
        const hashPassword= await bcrypt.hash(Password,3);
        //console.log(hashPassword);
  
-       const {firstName,SecondName,Email,age,gender,skills,PhotoUrl,about}=req.body;
+       const {firstName,SecondName,Email,gender}=req.body;
        const u=new User({
           firstName,
           SecondName,
           Email,
-          age,
-          Password:hashPassword,
           gender,
-          skills,
-          PhotoUrl,
-          about,
+          Password:hashPassword,
        });
        const savedUser=await u.save();
        console.log(savedUser);
